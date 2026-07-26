@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="AppleTitle" content="BarKeep Help">
+    <meta name="AppleFont" content="Helvetica,Arial,sans-serif">
+    <meta name="robots" content="anchors">
+    <title>BarKeep Help</title>
+    <link rel="stylesheet" href="shrd/style.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <strong>Contents</strong>
+            <nav>
+                <ul>
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#getting-started">Getting Started</a></li>
+                    <li><a href="#zones">Menu Bar Zones</a></li>
+                    <li><a href="#collapse">Hide &amp; Show</a></li>
+                    <li><a href="#settings">Settings</a></li>
+                    <li><a href="#menus">Menus &amp; Shortcuts</a></li>
+                    <li><a href="#multimonitor">Multiple Displays</a></li>
+                    <li><a href="#tips">Tips</a></li>
+                    <li><a href="#troubleshooting">Troubleshooting</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <h1>BarKeep Help</h1>
+            <p class="lead">Tidy your Mac menu bar. Hide seldom-used app icons, keep system icons (Wi‑Fi, Clock, and friends) where you need them, and toggle with a click or keyboard shortcut.</p>
+
+            <a name="overview"></a>
+            <h2>Overview</h2>
+            <p>BarKeep is a menu-bar-only macOS app (no Dock icon). It places two controls in the status item area:</p>
+            <ul>
+                <li><strong>│</strong> — the hide boundary (divider)</li>
+                <li><strong>BK</strong> — the control chevron you click to collapse or expand</li>
+            </ul>
+            <p>When you collapse, icons to the <strong>left of │</strong> are pushed off-screen. Icons to the <strong>right of BK</strong> stay visible. No Accessibility or Screen Recording permission is required.</p>
+
+            <a name="getting-started"></a>
+            <h2>Getting Started</h2>
+            <ol>
+                <li>Launch <strong>BarKeep</strong> (or run <code>./build-app.sh</code> from the project folder).</li>
+                <li>Find <strong>│</strong> and <strong>BK</strong> in the menu bar (usually left of Wi‑Fi / Clock).</li>
+                <li>Hold <span class="shortcut">⌘</span> and drag app icons you want hidden fully to the <strong>left of │</strong>.</li>
+                <li>Keep system icons (Wi‑Fi, Bluetooth, Sound, Clock, Control Center) to the <strong>right of BK</strong>.</li>
+                <li>Click <strong>BK</strong> once to hide; click again to show.</li>
+            </ol>
+            <div class="callout">
+                Dropping an icon onto the letters “BK” does not hide it. Only icons left of the thin <strong>│</strong> mark are in the hide zone.
+            </div>
+
+            <a name="zones"></a>
+            <h2>Menu Bar Zones</h2>
+            <p>Think of the bar in three parts (left → right toward the clock):</p>
+            <div class="zone">[ hide these apps ]  │  [ keepers ]  BK  [ Wi‑Fi · Bluetooth · Clock ]</div>
+            <table>
+                <thead>
+                    <tr><th>Zone</th><th>What goes here</th><th>When collapsed</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Left of │</td>
+                        <td>App icons you rarely need</td>
+                        <td>Hidden</td>
+                    </tr>
+                    <tr>
+                        <td>Between │ and BK</td>
+                        <td>App icons you still want visible</td>
+                        <td>Stay visible</td>
+                    </tr>
+                    <tr>
+                        <td>Right of BK</td>
+                        <td>System modules and the clock</td>
+                        <td>Stay visible</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <a name="collapse"></a>
+            <h2>Hide &amp; Show</h2>
+            <ul>
+                <li><strong>Click BK</strong> — toggle collapsed / expanded</li>
+                <li><strong>⌃⌘B</strong> — same toggle from the keyboard (if enabled in Settings)</li>
+                <li><strong>Right-click BK</strong> — open the control menu</li>
+            </ul>
+            <p>BarKeep begins <strong>expanded</strong> so a previous session cannot leave you without a chevron. If <strong>Start collapsed</strong> is on in Settings, it collapses about a second after launch once icons have settled.</p>
+            <p>Under the hood, collapse expands the divider’s length (the same public-API technique used by Hidden Bar and Ice) so items ordered left of │ leave the visible bar.</p>
+
+            <a name="settings"></a>
+            <h2>Settings</h2>
+            <p>Open Settings from the right-click menu on BK, or with <span class="shortcut">⌘,</span> while a BarKeep window is key.</p>
+            <table>
+                <thead>
+                    <tr><th>Option</th><th>Default</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Start collapsed</td>
+                        <td>Off</td>
+                        <td>After launch, wait about a second for icons to settle, then collapse.</td>
+                    </tr>
+                    <tr>
+                        <td>Auto-hide after delay</td>
+                        <td>Off</td>
+                        <td>After you expand, collapse again after 5–60 seconds.</td>
+                    </tr>
+                    <tr>
+                        <td>Show on hover</td>
+                        <td>Off</td>
+                        <td>Expand when the pointer is in the right half of the menu bar.</td>
+                    </tr>
+                    <tr>
+                        <td>Launch at login</td>
+                        <td>Off</td>
+                        <td>Start BarKeep when you log in (macOS Login Items).</td>
+                    </tr>
+                    <tr>
+                        <td>Global hotkey ⌃⌘B</td>
+                        <td>On</td>
+                        <td>Toggle hide/show from the keyboard.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <a name="menus"></a>
+            <h2>Menus &amp; Shortcuts</h2>
+            <h3>Right-click BK</h3>
+            <ul>
+                <li>Show Hidden Icons / Hide Icons Left of │</li>
+                <li>Settings…</li>
+                <li>BarKeep Help…</li>
+                <li>How to Arrange Icons… (quick tips)</li>
+                <li>Reset BarKeep Position…</li>
+                <li>Quit BarKeep</li>
+            </ul>
+            <h3>Keyboard</h3>
+            <table>
+                <thead>
+                    <tr><th>Shortcut</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><span class="shortcut">⌃⌘B</span></td><td>Toggle collapse / expand</td></tr>
+                    <tr><td><span class="shortcut">⌘,</span></td><td>Settings (when a BarKeep window is key)</td></tr>
+                    <tr><td><span class="shortcut">⌘?</span> / Help menu</td><td>Open BarKeep Help</td></tr>
+                    <tr><td><span class="shortcut">⌘Q</span></td><td>Quit</td></tr>
+                    <tr><td><span class="shortcut">⌘</span>-drag</td><td>Rearrange any menu bar icon</td></tr>
+                </tbody>
+            </table>
+
+            <a name="multimonitor"></a>
+            <h2>Multiple Displays</h2>
+            <p>Status icons can appear on more than one menu bar. Collapse and expand apply to the bar where you click <strong>BK</strong>. System icons on another display are not treated as “left of │” on the display you are using.</p>
+
+            <a name="tips"></a>
+            <h2>Tips</h2>
+            <ul>
+                <li>If │ and BK sit too far right (between Wi‑Fi and Clock), use <strong>Reset BarKeep Position…</strong> or ⌘-drag them left of the system cluster.</li>
+                <li>Your arrangement of other apps’ icons is remembered by macOS. BarKeep only seeds its own position once.</li>
+                <li>For a stable “launch at login” setup, keep <code>BarKeep.app</code> in a fixed place (for example <code>/Applications</code> or this project folder).</li>
+                <li>First-run tips can be shown again from the right-click menu: <strong>How to Arrange Icons…</strong>.</li>
+            </ul>
+
+            <a name="troubleshooting"></a>
+            <h2>Troubleshooting</h2>
+            <h3>Icons only shift, they don’t hide</h3>
+            <p>Make sure the icons you want hidden are fully <strong>left of │</strong>, then click BK again. Rebuild with <code>./build-app.sh</code> if you are on an older build.</p>
+
+            <h3>BK or the chevron disappeared</h3>
+            <p>Quit and reopen BarKeep, or run:</p>
+            <p><code>pkill -x BarKeep; open ~/BarKeep/BarKeep.app</code></p>
+            <p>BarKeep always starts expanded so the control can reappear.</p>
+
+            <h3>System icons disappeared when I collapsed</h3>
+            <p>⌘-drag │ and BK so Wi‑Fi, Bluetooth, Sound, and Clock sit to the <strong>right of BK</strong>. Then collapse again. Only app icons should be left of │.</p>
+
+            <h3>Hotkey does nothing</h3>
+            <p>Open Settings and confirm <strong>Global hotkey ⌃⌘B</strong> is on. Another app may have registered the same combination.</p>
+
+            <h3>Help window says help is unavailable</h3>
+            <p>Rebuild with <code>./build-app.sh</code> so the help book is copied into <code>BarKeep.app/Contents/Resources/</code>.</p>
+
+            <p class="version">BarKeep 1.1.1 · macOS 13 or later</p>
+        </main>
+    </div>
+</body>
+</html>
