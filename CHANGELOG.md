@@ -5,6 +5,19 @@ All notable changes to **BarKeep** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project aims to follow [Semantic Versioning](https://semver.org/).
 
+## [1.2.3] - 2026-08-09
+
+### Changed
+
+- **Keepers UX copy**: Settings section is “Keepers (reserve & attempt place)” — honest about public-API limits (not fully automatic “always show”)
+- **ExclusionPlacer** writes other apps’ status-item positions with **CFPreferences only** (no full preference-plist rewrite)
+- Docs: **Apple Silicon (arm64)** called out; ad-hoc signing / Gatekeeper friction documented
+- Pure logic extracted to **BarKeepCore** with unit tests (`swift test`)
+
+### Fixed
+
+- Removed accidental email-like iconset filenames; restored standard `icon_*@2x.png` names
+
 ## [1.2.2] - 2026-08-09
 
 ### Added

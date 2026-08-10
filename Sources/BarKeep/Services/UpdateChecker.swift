@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import BarKeepCore
 
 /// Checks GitHub Releases for a newer BarKeep and opens the project page.
 @MainActor
@@ -39,7 +40,7 @@ enum UpdateChecker {
             defer { isChecking = false }
             do {
                 let latest = try await fetchLatestRelease()
-                let comparison = compareVersions(currentVersion, latest.tagVersion)
+                let comparison = VersionCompare.compare(currentVersion, latest.tagVersion)
                 await presentResult(
                     latest: latest,
                     comparison: comparison,
@@ -76,11 +77,7 @@ enum UpdateChecker {
 
         /// Normalize `v1.2.3` / `1.2.3` → `1.2.3`
         var tagVersion: String {
-            let t = tagName.trimmingCharacters(in: .whitespacesAndNewlines)
-            if t.lowercased().hasPrefix("v") {
-                return String(t.dropFirst())
-            }
-            return t
+            VersionCompare.normalizeTag(tagName)
         }
     }
 
@@ -107,31 +104,6 @@ enum UpdateChecker {
             throw UpdateError.noReleases
         }
         return release
-    }
-
-    // MARK: - Compare
-
-    /// - Returns: `.orderedAscending` if `lhs` < `rhs` (update available when current < latest)
-    static func compareVersions(_ lhs: String, _ rhs: String) -> ComparisonResult {
-        let a = versionParts(lhs)
-        let b = versionParts(rhs)
-        let n = max(a.count, b.count)
-        for i in 0..<n {
-            let x = i < a.count ? a[i] : 0
-            let y = i < b.count ? b[i] : 0
-            if x < y { return .orderedAscending }
-            if x > y { return .orderedDescending }
-        }
-        return .orderedSame
-    }
-
-    private static func versionParts(_ version: String) -> [Int] {
-        version
-            .split(whereSeparator: { $0 == "." || $0 == "-" })
-            .map { part in
-                let digits = part.prefix(while: \.isNumber)
-                return Int(digits) ?? 0
-            }
     }
 
     // MARK: - UI

@@ -204,8 +204,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func showAbout() {
         let info = Bundle.main.infoDictionary
-        let version = info?["CFBundleShortVersionString"] as? String ?? "1.2.2"
-        let build = info?["CFBundleVersion"] as? String ?? "8"
+        let version = info?["CFBundleShortVersionString"] as? String ?? "1.2.3"
+        let build = info?["CFBundleVersion"] as? String ?? "9"
         let alert = NSAlert()
         alert.messageText = "BarKeep"
         alert.informativeText = """

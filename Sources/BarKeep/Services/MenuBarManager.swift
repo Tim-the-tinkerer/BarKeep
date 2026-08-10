@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import BarKeepCore
 
 /// Hidden Bar–style menu bar manager (Tahoe-hardened).
 ///
@@ -176,21 +177,23 @@ final class MenuBarManager: NSObject {
                 dividerPosition: dividerPos
             )
             NSLog(
-                "BarKeep: exclusions apply (%@) count=%d appsTouched=%d keys=%d gap=%.0f…%.0f",
-                reason, count, result.appsTouched, result.keysUpdated, controlPos, dividerPos
+                "BarKeep: keepers apply (%@) count=%d appsTouched=%d keys=%d noKeys=%@ gap=%.0f…%.0f",
+                reason, count, result.appsTouched, result.keysUpdated,
+                result.appsWithoutKeys.joined(separator: ","),
+                controlPos, dividerPos
             )
         } else {
-            NSLog("BarKeep: exclusions cleared (%@); tight gap control=%.0f divider=%.0f", reason, controlPos, dividerPos)
+            NSLog("BarKeep: keepers cleared (%@); tight gap control=%.0f divider=%.0f", reason, controlPos, dividerPos)
         }
 
-        // Warn if any exclusion is still left of │ while expanded (hide zone).
+        // Best-effort: if we can still see a listed app left of │, log a ⌘-drag hint.
         if !isCollapsed, let dividerX = dividerItem?.button?.window?.frame.minX {
             let misplaced = settings.exclusions.filter {
                 MenuBarAppScanner.exclusionWindowsLeftOf(dividerX: dividerX, exclusion: $0)
             }
             if !misplaced.isEmpty {
                 NSLog(
-                    "BarKeep: exclusions still left of │: %@",
+                    "BarKeep: keepers still left of │ (⌘-drag into zone): %@",
                     misplaced.map(\.name).joined(separator: ", ")
                 )
             }

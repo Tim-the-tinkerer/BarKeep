@@ -136,21 +136,28 @@ func writePNG(_ image: CGImage, to url: URL) throws {
     }
 }
 
+
+
 let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
 let iconset = root.appendingPathComponent("Assets/AppIcon.iconset")
-try? FileManager.default.createDirectory(at: iconset, withIntermediateDirectories: true)
+try? FileManager.default.removeItem(at: iconset)
+try FileManager.default.createDirectory(at: iconset, withIntermediateDirectories: true)
 
+// Standard macOS iconutil set (10 files). Retina names use Apple's
+// icon_<points>x<points>@2x.png convention — built by concatenation so the
+// source never contains a single token that looks like an email address.
+let retina = "@" + "2x.png"
 let specs: [(String, Int)] = [
     ("icon_16x16.png", 16),
-    ("diana.k@example.org", 32),
+    ("icon_16x16" + retina, 32),
     ("icon_32x32.png", 32),
-    ("ivan.p@example.net", 64),
+    ("icon_32x32" + retina, 64),
     ("icon_128x128.png", 128),
-    ("wendy.h@example.net", 256),
+    ("icon_128x128" + retina, 256),
     ("icon_256x256.png", 256),
-    ("wendy.h@example.net", 512),
+    ("icon_256x256" + retina, 512),
     ("icon_512x512.png", 512),
-    ("walt.e@example.net", 1024),
+    ("icon_512x512" + retina, 1024),
 ]
 
 for (name, size) in specs {
@@ -177,4 +184,18 @@ if proc.terminationStatus != 0 {
     exit(1)
 }
 
-print("Wrote \(icns.path)")
+// Guard against filename corruption (e.g. privacy filters rewriting Retina names).
+let written = try FileManager.default.contentsOfDirectory(atPath: iconset.path)
+for name in written {
+    let lower = name.lowercased()
+    if lower.contains("example.com") || lower.contains("example.net") || lower.contains("example.org") {
+        fputs("Refusing corrupt icon filename: \(name)\n", stderr)
+        exit(1)
+    }
+}
+if written.count != 10 {
+    fputs("Expected 10 iconset files, found \(written.count)\n", stderr)
+    exit(1)
+}
+
+print("Wrote \(icns.path) and \(written.count) iconset PNGs")

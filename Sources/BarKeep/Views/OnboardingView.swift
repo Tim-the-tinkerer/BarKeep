@@ -27,7 +27,7 @@ struct OnboardingView: View {
             step(
                 number: 2,
                 title: "Hide zone = left of │ only",
-                detail: "⌘-drag app icons you want hidden fully LEFT of │. Icons between │ and BK stay visible (exclusions / keepers). Or add apps under Settings → Exclusions. Dropping something on “BK” does nothing special."
+                detail: "⌘-drag app icons you want hidden fully LEFT of │. Icons between │ and BK stay visible (keepers). Settings → Keepers reserves that zone and may attempt placement; ⌘-drag is still the reliable step. Dropping something on “BK” does nothing special."
             )
             step(
                 number: 3,

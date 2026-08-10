@@ -1,6 +1,7 @@
 import AppKit
 import CoreGraphics
 import Foundation
+import BarKeepCore
 
 /// A third-party (or user) app that is a candidate for the exclusions list.
 struct MenuBarApp: Equatable, Identifiable, Hashable {

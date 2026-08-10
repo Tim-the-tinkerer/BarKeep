@@ -1,4 +1,5 @@
 import SwiftUI
+import BarKeepCore
 
 struct SettingsView: View {
     @State private var settings: AppSettings
@@ -59,9 +60,9 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    // Current exclusions
+                    // Current keeper list
                     if settings.exclusions.isEmpty {
-                        Text("Nothing excluded yet. Choose apps below to keep visible when collapsed.")
+                        Text("No keepers listed yet. Add apps you want to try to keep visible when collapsed.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     } else {
@@ -89,7 +90,7 @@ struct SettingsView: View {
                                         .foregroundStyle(.red.opacity(0.85))
                                 }
                                 .buttonStyle(.borderless)
-                                .help("Remove from exclusions")
+                                .help("Remove from keeper list")
                             }
                         }
                     }
@@ -133,7 +134,7 @@ struct SettingsView: View {
                                         .lineLimit(1)
                                 }
                                 Spacer(minLength: 8)
-                                Button("Always show") {
+                                Button("Add as keeper") {
                                     addExclusion(app)
                                 }
                                 .buttonStyle(.bordered)
@@ -156,9 +157,13 @@ struct SettingsView: View {
                     }
 
                     if !settings.exclusions.isEmpty {
-                        Button("Apply keepers zone") {
+                        Button("Reserve keeper zone") {
                             onExclusionsChanged?()
-                            placementNote = "Opened space between │ and BK for \(settings.exclusions.count) exclusion(s). ⌘-drag those icons between │ and BK (or relaunch them) so they stay visible."
+                            placementNote = """
+                            Reserved space between │ and BK for \(settings.exclusions.count) app(s) and attempted preferred-position placement (CFPreferences only).
+
+                            Live icons usually still need a ⌘-drag into that zone once—or relaunch the other app so it re-reads its status item position. Apps without a named status item cannot be moved programmatically.
+                            """
                         }
                         .controlSize(.small)
                     }
@@ -170,10 +175,12 @@ struct SettingsView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 } header: {
-                    Text("Exclusions (always show)")
+                    Text("Keepers (reserve & attempt place)")
                 } footer: {
-                    Text("Excluded apps stay visible when collapsed by sitting between │ and BK. On macOS Tahoe, BarKeep finds menu bar apps from running utilities (not window ownership). ⌘-drag icons into the keepers zone once so placement sticks.")
-                        .font(.caption)
+                    Text("""
+                    This is not fully automatic. BarKeep reserves the zone between │ and BK and may write another app’s existing status-item preferred-position keys (CFPreferences only). That often applies only after that app relaunches. The reliable step is still ⌘-dragging the icon between │ and BK.
+                    """)
+                    .font(.caption)
                 }
 
                 Section("General") {
@@ -284,7 +291,7 @@ struct SettingsView: View {
         var s = settings
         s.addExclusion(.make(name: app.name, bundleIdentifier: app.bundleIdentifier))
         settings = s
-        placementNote = "“\(app.name)” added. ⌘-drag its icon between │ and BK so it stays visible when collapsed."
+        placementNote = "“\(app.name)” listed as a keeper. Reserve the zone, then ⌘-drag its icon between │ and BK (relaunch that app if needed)."
         onExclusionsChanged?()
         refreshRunningApps()
     }
@@ -306,7 +313,7 @@ struct SettingsView: View {
         s.addExclusion(entry)
         settings = s
         manualName = ""
-        placementNote = "“\(entry.name)” added. ⌘-drag its icon between │ and BK."
+        placementNote = "“\(entry.name)” listed as a keeper. ⌘-drag its icon between │ and BK."
         onExclusionsChanged?()
         refreshRunningApps()
     }
@@ -321,8 +328,8 @@ struct SettingsView: View {
 
     private var versionLine: String {
         let info = Bundle.main.infoDictionary
-        let version = info?["CFBundleShortVersionString"] as? String ?? "1.2.2"
-        let build = info?["CFBundleVersion"] as? String ?? "8"
-        return "BarKeep \(version) (build \(build))"
+        let version = info?["CFBundleShortVersionString"] as? String ?? "1.2.3"
+        let build = info?["CFBundleVersion"] as? String ?? "9"
+        return "BarKeep \(version) (build \(build)) · Apple Silicon"
     }
 }
