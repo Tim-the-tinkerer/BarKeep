@@ -1,5 +1,28 @@
 import Foundation
 
+/// One menu-bar app the user wants to keep visible when BarKeep collapses.
+struct ExclusionEntry: Equatable, Codable, Identifiable, Hashable {
+    /// Stable id: bundle identifier when known, otherwise `name:` + display name.
+    var id: String
+    /// Menu-bar / process display name (e.g. "Dropbox").
+    var name: String
+    /// Bundle identifier when known (used to write preferred-position prefs).
+    var bundleIdentifier: String?
+
+    init(id: String, name: String, bundleIdentifier: String? = nil) {
+        self.id = id
+        self.name = name
+        self.bundleIdentifier = bundleIdentifier
+    }
+
+    static func make(name: String, bundleIdentifier: String?) -> ExclusionEntry {
+        if let bundleIdentifier, !bundleIdentifier.isEmpty {
+            return ExclusionEntry(id: bundleIdentifier, name: name, bundleIdentifier: bundleIdentifier)
+        }
+        return ExclusionEntry(id: "name:\(name)", name: name, bundleIdentifier: nil)
+    }
+}
+
 /// User preferences for BarKeep. Persisted via `UserDefaults`.
 struct AppSettings: Equatable {
     /// Collapse hidden items after a delay when expanded.
@@ -16,6 +39,8 @@ struct AppSettings: Equatable {
     var hotkeyEnabled: Bool
     /// Onboarding tip already dismissed.
     var didShowOnboarding: Bool
+    /// Apps that should stay visible when collapsed (keepers zone between │ and BK).
+    var exclusions: [ExclusionEntry]
 
     static let `default` = AppSettings(
         autoHide: false,
@@ -24,7 +49,8 @@ struct AppSettings: Equatable {
         startCollapsed: false,
         launchAtLogin: false,
         hotkeyEnabled: true,
-        didShowOnboarding: false
+        didShowOnboarding: false,
+        exclusions: []
     )
 
     private enum Keys {
@@ -35,6 +61,7 @@ struct AppSettings: Equatable {
         static let launchAtLogin = "launchAtLogin"
         static let hotkeyEnabled = "hotkeyEnabled"
         static let didShowOnboarding = "didShowOnboarding"
+        static let exclusions = "exclusions"
     }
 
     static func load() -> AppSettings {
@@ -62,6 +89,10 @@ struct AppSettings: Equatable {
         if d.object(forKey: Keys.didShowOnboarding) != nil {
             s.didShowOnboarding = d.bool(forKey: Keys.didShowOnboarding)
         }
+        if let data = d.data(forKey: Keys.exclusions),
+           let decoded = try? JSONDecoder().decode([ExclusionEntry].self, from: data) {
+            s.exclusions = Self.uniqueExclusions(decoded)
+        }
         return s
     }
 
@@ -74,6 +105,37 @@ struct AppSettings: Equatable {
         d.set(launchAtLogin, forKey: Keys.launchAtLogin)
         d.set(hotkeyEnabled, forKey: Keys.hotkeyEnabled)
         d.set(didShowOnboarding, forKey: Keys.didShowOnboarding)
+        if let data = try? JSONEncoder().encode(Self.uniqueExclusions(exclusions)) {
+            d.set(data, forKey: Keys.exclusions)
+        }
+    }
+
+    mutating func addExclusion(_ entry: ExclusionEntry) {
+        exclusions = Self.uniqueExclusions(exclusions + [entry])
+    }
+
+    mutating func removeExclusion(id: String) {
+        exclusions.removeAll { $0.id == id }
+    }
+
+    func isExcluded(name: String, bundleIdentifier: String?) -> Bool {
+        if let bundleIdentifier, exclusions.contains(where: { $0.bundleIdentifier == bundleIdentifier }) {
+            return true
+        }
+        let lowered = name.lowercased()
+        return exclusions.contains { $0.name.lowercased() == lowered }
+    }
+
+    private static func uniqueExclusions(_ list: [ExclusionEntry]) -> [ExclusionEntry] {
+        var seen = Set<String>()
+        var out: [ExclusionEntry] = []
+        for e in list {
+            let key = e.bundleIdentifier ?? e.id
+            if seen.insert(key).inserted {
+                out.append(e)
+            }
+        }
+        return out.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
 }
 

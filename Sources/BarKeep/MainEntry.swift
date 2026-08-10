@@ -110,6 +110,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         about.target = self
 
+        let checkUpdates = appMenu.addItem(
+            withTitle: "Check for Updates…",
+            action: #selector(checkForUpdates),
+            keyEquivalent: ""
+        )
+        checkUpdates.target = self
+
         appMenu.addItem(NSMenuItem.separator())
 
         let settingsItem = appMenu.addItem(
@@ -146,6 +153,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         tipsItem.target = self
 
+        helpMenu.addItem(NSMenuItem.separator())
+
+        let githubItem = helpMenu.addItem(
+            withTitle: "BarKeep on GitHub…",
+            action: #selector(openGitHub),
+            keyEquivalent: ""
+        )
+        githubItem.target = self
+
+        let releasesItem = helpMenu.addItem(
+            withTitle: "Release Notes on GitHub…",
+            action: #selector(openReleases),
+            keyEquivalent: ""
+        )
+        releasesItem.target = self
+
         NSApp.mainMenu = mainMenu
     }
 
@@ -167,10 +190,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menuBarManager?.showOnboarding()
     }
 
+    @objc private func checkForUpdates() {
+        UpdateChecker.checkForUpdates(interactive: true)
+    }
+
+    @objc private func openGitHub() {
+        UpdateChecker.openRepository()
+    }
+
+    @objc private func openReleases() {
+        UpdateChecker.openReleases()
+    }
+
     @objc private func showAbout() {
         let info = Bundle.main.infoDictionary
-        let version = info?["CFBundleShortVersionString"] as? String ?? "1.1.0"
-        let build = info?["CFBundleVersion"] as? String ?? "3"
+        let version = info?["CFBundleShortVersionString"] as? String ?? "1.2.2"
+        let build = info?["CFBundleVersion"] as? String ?? "8"
         let alert = NSAlert()
         alert.messageText = "BarKeep"
         alert.informativeText = """
@@ -180,18 +215,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         Hold ⌘ and drag icons to arrange what stays visible.
 
-        Right-click BK → BarKeep Help… for the full guide.
+        Updates & source: \(UpdateChecker.repositoryURL.absoluteString)
         """
         alert.alertStyle = .informational
         if let icon = NSApp.applicationIconImage {
             alert.icon = icon
         }
         alert.addButton(withTitle: "OK")
-        alert.addButton(withTitle: "Help")
+        alert.addButton(withTitle: "Check for Updates…")
+        alert.addButton(withTitle: "GitHub…")
         NSApp.activate(ignoringOtherApps: true)
         let response = alert.runModal()
         if response == .alertSecondButtonReturn {
-            HelpPresenter.showHelp()
+            UpdateChecker.checkForUpdates(interactive: true)
+        } else if response == .alertThirdButtonReturn {
+            UpdateChecker.openRepository()
         }
     }
 }

@@ -19,11 +19,11 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.1.1</string>
+    <string>1.2.2</string>
     <key>CFBundleVersion</key>
-    <string>3</string>
+    <string>8</string>
     <key>CFBundleGetInfoString</key>
-    <string>BarKeep 1.1.1</string>
+    <string>BarKeep 1.2.2</string>
     <key>CFBundleHelpBookFolder</key>
     <string>BarKeep.help</string>
     <key>CFBundleHelpBookName</key>
